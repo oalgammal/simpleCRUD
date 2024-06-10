@@ -38,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.24.7",
     "@tanstack/eslint-plugin-query": "^5.35.6"
   }
 }
