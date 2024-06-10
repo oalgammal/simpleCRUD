@@ -1,3 +1,3 @@
 export interface IDeleteUserProps {
-  refetch: () => Promise<void>
+  refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<unknown, Error>>
 }

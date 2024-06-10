@@ -1,50 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { CSSProperties } from 'react';
+import { useState } from 'react';
 import { IAddNewProps } from './types';
+import usePostMutation from '../../helpers/usePostMutation';
 
 
 
 
 const AddNew = ({refetch}:IAddNewProps) => {
+
+  const mutation = usePostMutation<{ username: string; password: string }, any>(
+    {queryKey:['newUser']}
+  );
+
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    const newUser = {
+  
+  const newUser = {
       username: user,
       password: password,
-    };
+   };
 
-    try {
-      const response = await fetch('http://localhost:8088/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newUser),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+  const handleSubmit = async () => {
+    mutation.mutate(newUser, {
+      onSuccess: () => {
+        setUser('')
+        setPassword('')
+        if (refetch) refetch();
       }
-
-      setSuccess(true);
-    } catch (err: any) {
-      setError(err?.message);
-    } finally {
-      await refetch()
-      setPassword('')
-      setUser('')
-      setLoading(false);
-    }
-  };
+    });
+  }     
 
 
   return (

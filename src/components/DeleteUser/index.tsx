@@ -1,46 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { CSSProperties } from 'react';
+import { useState } from 'react';
 import { IDeleteUserProps } from './types';
+import useDeleteMutation from '../../helpers/useDeleteMutation';
 
 
 
 
 const DeleteUser = ({refetch}:IDeleteUserProps) => {
+
+  const mutation = useDeleteMutation<{ payload: string }, any>(
+    {queryKey:['deleteUser']}
+  );
+
+
   const [user, setUser] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  
+  const deletedUser = {
+    payload: user,
+  };
+
 
   const handleSubmit = async () => {
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    const newUser = {
-      payload: user,
-    };
-
-    try {
-      const response = await fetch('http://localhost:8088/users', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newUser),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+    mutation.mutate(deletedUser, {
+      onSuccess: () => {
+        setUser('')
+        if (refetch) refetch();
       }
-
-      setSuccess(true);
-    } catch (err: any) {
-      setError(err?.message);
-    } finally {
-      await refetch()
-      setUser('')
-      setLoading(false);
-    }
+    });
+   
   };
 
 
