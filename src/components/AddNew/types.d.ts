@@ -1,3 +1,3 @@
 export interface IAddNewProps {
-  refetch: () => Promise<void>
+  refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<unknown, Error>>
 }
